@@ -1,5 +1,4 @@
 # SafeReport
-# SafeReport
 
 SafeReport is an anonymous and secure platform designed to help individuals report incidents of online harassment, fraud, and abuse without fear of tracking or personal data exposure. It aims to provide a safe digital space for users to seek help and contribute to a safer online environment.
 
