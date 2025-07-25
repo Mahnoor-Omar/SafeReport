@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SafeReport</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-soft: #e9f5ec;
+      --green-deep: #2d6a4f;
+      --gray-light: #f8f9fa;
+      --white: #ffffff;
+      --focus-color: #1b4332;
+    }
+
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      /* Updated background to the new circular gradient */
+      background: radial-gradient(circle at 0% 0%, #1ac11a, #07dc36, #4effb1, #beffdc, #42e953, #23ff00, rgba(200, 246, 196, 0.175), rgba(48, 255, 38, 1), rgba(191, 255, 255, 0.175), #03ff03);
+      color: #222;
+      overflow-x: hidden;
+      line-height: 1.5;
+      direction: ltr;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes bounce {
+      0%,100% {transform: translateY(0);}
+      50% {transform: translateY(-10px);}
+    }
+
+    /* New Lock Animations */
+    @keyframes lock-action {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); } /* Subtle lift */
+    }
+
+    @keyframes shackle-move {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); } /* Shackle opens slightly */
+        75% { transform: rotate(10deg); } /* Shackle opens slightly the other way */
+    }
+
+    @keyframes glow {
+        0%, 100% { opacity: 0.8; }
+        50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    header {
+      background: var(--green-deep);
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    .lang-select {
+      background: white;
+      color: #222;
+      border-radius: 4px;
+      border: none;
+      padding: 6px 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
+    }
+    .lang-select:focus {
+        outline: none;
+        box-shadow: 0 0 4px var(--green-deep);
+    }
+
+    .hero {
+      padding: 80px 20px;
+      text-align: center;
+      background: radial-gradient(at 0% 0%, rgba(26, 193, 26, 1), rgba(7, 220, 54, 1), rgba(78, 255, 177, 1), rgba(190, 255, 220, 1), rgba(66, 233, 83, 1), rgba(35, 255, 0, 1), rgba(200, 246, 196, 0.175), rgba(48, 255, 38, 1), rgba(191, 255, 255, 0.175), rgba(3, 255, 3, 1));
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+      animation-delay: 0.3s;
+      animation-fill-mode: forwards;
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 120px; /* Added padding to make space for the combined elements at the bottom */
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, var(--green-deep), #3a8a68);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+
+    .hero button {
+      background: var(--green-deep);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .hero button:hover,
+    .hero button:focus {
+      outline: none;
+      transform: scale(1.05);
+      background: var(--focus-color);
+    }
+
+    /* New container for bottom elements */
+    .hero-bottom-elements {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%); /* Center horizontally */
+        display: flex; /* Use flexbox to arrange items */
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items horizontally within the column */
+        gap: 10px; /* Space between the arrow and the lock */
+        z-index: 2; /* Ensure it's above other things if needed */
+    }
+
+    .scroll-down-indicator {
+      /* Reset individual positioning, now handled by .hero-bottom-elements */
+      margin: 0;
+      color: var(--green-deep);
+      animation: bounce 2s infinite;
+      cursor: pointer;
+    }
+    .scroll-down-indicator svg {
+        display: block; /* Keep block to remove extra space below SVG */
+        width: 24px; /* Adjust SVG size if needed */
+        height: 24px;
+    }
+
+    /* Cyberlock styles - Position now controlled by .hero-bottom-elements */
+    .cyberlock {
+        /* Removed absolute positioning and centering transform */
+        position: static; /* Let flexbox control its position */
+        transform: none; /* Crucial to remove previous translateX for centering */
+        width: 40px; /* Reduced lock body width */
+        height: 40px; /* Reduced lock body height */
+        background: #333; /* Darker body for contrast */
+        border: 2px solid var(--green-deep);
+        border-radius: 6px; /* Adjust border radius for smaller size */
+        box-shadow: 0 0 10px rgba(45, 106, 79, 0.6); /* Adjusted glow */
+        animation: lock-action 3s infinite ease-in-out; /* Keep animation */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cyberlock::before { /* The Shackle */
+        content: '';
+        position: absolute;
+        top: -18px; /* Adjust position for smaller body */
+        width: 28px; /* Adjust shackle width */
+        height: 28px; /* Adjust shackle height */
+        border: 3px solid var(--green-deep); /* Adjust border thickness */
+        border-bottom: none; /* Make it U-shaped */
+        border-radius: 14px 14px 0 0; /* Rounded top corners */
+        transform-origin: bottom center; /* Pivot for potential rotation */
+        animation: shackle-move 3s infinite ease-in-out; /* Shackle animation */
+    }
+
+    .cyberlock::after { /* The Keyhole / Digital Indicator */
+        content: '';
+        position: absolute;
+        width: 10px; /* Reduced size */
+        height: 10px; /* Reduced size */
+        background: var(--green-deep); /* Green dot */
+        border-radius: 50%;
+        box-shadow: 0 0 6px var(--green-deep); /* Adjusted glow effect */
+        animation: glow 3s infinite alternate; /* Glow animation */
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px;
+      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+      animation-delay: 0.6s;
+      animation-fill-mode: forwards;
+    }
+
+    h2 {
+      color: var(--green-deep);
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, var(--green-deep), #3a8a68);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Updated Report Incident Section Background */
+    #form-section {
+      background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6);
+      padding: 40px 30px;
+      border-radius: 15px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    form {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      box-sizing: border-box;
+    }
+    form input:focus,
+    form select:focus,
+    form textarea:focus {
+      outline: none;
+      border-color: var(--green-deep);
+      box-shadow: 0 0 8px rgba(45, 106, 79, 0.4);
+      transform: scale(1.005);
+    }
+
+    form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .file-preview {
+      margin-top: 8px;
+      font-style: italic;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+      font-weight: 600;
+      user-select: none;
+    }
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+    .checkbox-label input[type="checkbox"]:checked {
+        transform: scale(1.1);
+    }
+
+    form button {
+      margin-top: 20px;
+      background: var(--green-deep);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    form button:hover,
+    form button:focus {
+      background: var(--focus-color);
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+      animation-delay: 0.9s;
+      animation-fill-mode: forwards;
+      margin-top: 40px;
+    }
+
+    .step {
+      background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6);
+      padding: 20px;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      animation: bounce 2.5s infinite ease-in-out;
+      font-weight: 600;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+
+    .step span {
+      display: block;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .awareness-card {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .awareness-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    /* Updated Stay Safe Online Section Background */
+    .awareness {
+      background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6);
+      padding: 60px 30px;
+      border-radius: 15px;
+      margin-top: 60px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .support {
+      margin-top: 50px;
+      text-align: center;
+      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+      animation-delay: 1.1s;
+      animation-fill-mode: forwards;
+    }
+
+    .support p {
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .support a {
+      text-decoration: none;
+      color: var(--green-deep);
+      font-weight: 600;
+      margin: 0 10px;
+      transition: color 0.3s ease;
+    }
+
+    .support a:hover,
+    .support a:focus {
+      color: var(--focus-color);
+      outline: none;
+    }
+
+    /* Style for the phone number display box */
+    #phone-display-box {
+      display: none; /* Hidden by default */
+      background-color: var(--green-deep);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 15px; /* Space from the link above */
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: fit-content; /* Adjust width to content */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      /* Updated to match the gradient of other boxes */
+      background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6);
+      color: #222; /* Adjust text color for better contrast on the new background */
+      font-size: 0.9rem;
+      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+      animation-delay: 1.3s;
+      animation-fill-mode: forwards;
+      margin-top: 60px;
+    }
+
+    footer a {
+      color: var(--green-deep); /* Adjust link color for better contrast */
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 8px;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+    footer a:hover,
+    footer a:focus {
+      color: #1b4332; /* Adjusted hover color for contrast */
+      outline: none;
+    }
+
+    @media (max-width: 600px) {
+      .steps {
+        flex-direction: column;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero-bottom-elements {
+        flex-direction: column; /* Stack vertically on smaller screens */
+        gap: 10px; /* Reduce gap when stacked */
+        bottom: 20px; /* Adjust overall height */
+      }
+      .cyberlock {
+        width: 35px;
+        height: 35px;
+      }
+      .cyberlock::before {
+        width: 24px;
+        height: 24px;
+        top: -15px;
+        border-width: 2.5px;
+        border-radius: 12px 12px 0 0;
+      }
+      .cyberlock::after {
+        width: 8px;
+        height: 8px;
+      }
+      .scroll-down-indicator svg {
+        width: 20px;
+        height: 20px;
+      }
+      #form-section, .awareness {
+        padding: 40px 20px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="logo-text">SafeReport</h1>
+    <select aria-label="Select Language" class="lang-select" id="language-select">
+      <option value="en" selected>EN</option>
+      <option value="ur">اردو</option>
+      <option value="pa">پنجابی</option>
+    </select>
+  </header>
+
+  <div class="hero" id="hero-section">
+    <h1 id="hero-title">🛡 SafeReport</h1>
+    <p id="hero-desc">Your anonymous digital space to report harassment, fraud, or abuse. No accounts. No tracking. Just help.</p>
+    <button id="start-report-btn" aria-describedby="form-section">Start Report</button>
+
+    <div class="hero-bottom-elements">
+        <div class="cyberlock"></div>
+        <div class="scroll-down-indicator" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down"><polyline points="12 5 12 19"></polyline><polyline points="19 12 12 19 5 12"></polyline></svg>
+        </div>
+    </div>
+  </div>
+
+  <main>
+    <section aria-labelledby="form-title" id="form-section">
+      <h2 id="form-title">Report an Incident</h2>
+      <form id="report-form" action="https://formspree.io/f/mldlbdgb" method="POST" enctype="multipart/form-data" novalidate>
+        <label for="incident-type" id="label-type">Type of incident</label>
+        <select name="incident-type" id="incident-type" required aria-required="true" aria-describedby="type-error">
+          <option value="" disabled selected>Select one</option>
+          <option value="Harassment">Harassment</option>
+          <option value="Online Fraud">Online Fraud</option>
+          <option value="Abuse">Abuse</option>
+        </select>
+        <div id="type-error" role="alert" style="color: red; display:none;">Please select an incident type.</div>
+
+        <label for="description" id="label-desc">Description</label>
+        <textarea name="description" id="description" rows="5" placeholder="Write details here..." required aria-required="true" aria-describedby="desc-error"></textarea>
+        <div id="desc-error" role="alert" style="color: red; display:none;">Please describe the incident.</div>
+
+        <label for="file-upload" id="label-file">Attach file (optional)</label>
+        <input type="file" name="file-upload" id="file-upload" aria-describedby="file-info" accept="image/,audio/" />
+        <div id="file-info" class="file-preview" aria-live="polite"></div>
+
+        <label class="checkbox-label" for="anonymous">
+          <input type="checkbox" name="anonymous" id="anonymous" />
+          <span id="anon-text">Stay anonymous</span>
+        </label>
+
+        <div id="contact-container" style="display:none;">
+          <label for="contact-info" id="label-contact">Contact info (optional)</label>
+          <input type="text" name="contact-info" id="contact-info" placeholder="Email or phone" aria-describedby="contact-help" />
+          <small id="contact-help" style="color:#555;">Only used if you want a follow-up.</small>
+        </div>
+
+        <button type="submit" id="submit-btn">Submit Report</button>
+      </form>
+    </section>
+
+    <section aria-label="How it works" class="steps">
+      <div class="step" tabindex="0"><span>🧾</span><span id="step1-text">Step 1: Fill the form</span></div>
+      <div class="step" tabindex="0"><span>🔒</span><span id="step2-text">Step 2: Your info is private</span></div>
+      <div class="step" tabindex="0"><span>📨</span><span id="step3-text">Step 3: We forward it securely</span></div>
+    </section>
+
+    <section class="awareness" aria-label="Awareness Section">
+      <h2 id="awareness-title" style="text-align: center; color: var(--green-deep); margin-bottom: 40px;">🛡 Stay Safe Online - Know the Threats</h2>
+
+      <div class="awareness-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+
+        <div class="awareness-card" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+          <h3 style="color: #856404; margin-bottom: 15px; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 10px;">⚠</span><span id="harassment-card-title">Online Harassment</span></h3>
+          <div id="harassment-card-content">
+            <p><strong id="harassment-what-is-it">What is it?</strong> <span id="harassment-what-is-it-desc">Cyberbullying, stalking, threats, or unwanted contact through digital platforms.</span></p>
+            <p><strong id="harassment-how-to-protect">How to protect yourself:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li id="harassment-tip1">Keep personal information private</li>
+              <li id="harassment-tip2">Use privacy settings on social media</li>
+              <li id="harassment-tip3">Block and report harassers immediately</li>
+              <li id="harassment-tip4">Save evidence (screenshots, messages)</li>
+              <li id="harassment-tip5">Don't engage with trolls or harassers</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awareness-card" style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+          <h3 style="color: #0c5460; margin-bottom: 15px; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 10px;">💳</span><span id="fraud-card-title">Online Fraud</span></h3>
+          <div id="fraud-card-content">
+            <p><strong id="fraud-what-is-it">What is it?</strong> <span id="fraud-what-is-it-desc">Scams designed to steal money, personal information, or identity through fake websites, emails, or calls.</span></p>
+            <p><strong id="fraud-how-to-protect">How to protect yourself:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li id="fraud-tip1">Verify website URLs before entering data</li>
+              <li id="fraud-tip2">Never share OTPs or passwords</li>
+              <li id="fraud-tip3">Be suspicious of "too good to be true" offers</li>
+              <li id="fraud-tip4">Use secure payment methods</li>
+              <li id="fraud-tip5">Check bank statements regularly</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awareness-card" style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+          <h3 style="color: #721c24; margin-bottom: 15px; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 10px;">🚫</span><span id="abuse-card-title">Digital Abuse</span></h3>
+          <div id="abuse-card-content">
+            <p><strong id="abuse-what-is-it">What is it?</strong> <span id="abuse-what-is-it-desc">Using technology to control, intimidate, or harm someone, including sharing private content without consent.</span></p>
+            <p><strong id="abuse-how-to-protect">How to protect yourself:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li id="abuse-tip1">Be cautious about sharing intimate content</li>
+              <li id="abuse-tip2">Regularly check who has access to your accounts</li>
+              <li id="abuse-tip3">Use strong, unique passwords</li>
+              <li id="abuse-tip4">Trust your instincts about suspicious behavior</li>
+              <li id="abuse-tip5">Seek help from trusted friends or authorities</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="awareness-card" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+          <h3 style="color: #155724; margin-bottom: 15px; display: flex; align-items: center;"><span style="font-size: 1.5rem; margin-right: 10px;">🔒</span><span id="security-card-title">Cybersecurity Threats</span></h3>
+          <div id="security-card-content">
+            <p><strong id="security-what-is-it">What is it?</strong> <span id="security-what-is-it-desc">Malware, phishing, data breaches, and other attacks targeting your devices and information.</span></p>
+            <p><strong id="security-how-to-protect">How to protect yourself:</strong></p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li id="security-tip1">Keep software and apps updated</li>
+              <li id="security-tip2">Use antivirus protection</li>
+              <li id="security-tip3">Enable two-factor authentication</li>
+              <li id="security-tip4">Be careful with public Wi-Fi</li>
+              <li id="security-tip5">Backup important data regularly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="emergency-tips" style="background: linear-gradient(135deg, #c3e6cb 0%, #d4edda 100%); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 40px;">
+        <h3 id="emergency-title" style="color: #383d41; margin-bottom: 20px;">🚨 If You're Being Targeted</h3>
+        <div id="emergency-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left;">
+          <div>
+            <strong id="doc-everything-title">Document Everything:</strong>
+            <p id="doc-everything-desc">Take screenshots, save messages, note dates and times</p>
+          </div>
+          <div>
+            <strong id="dont-engage-title">Don't Engage:</strong>
+            <p id="dont-engage-desc">Avoid responding to threats or provocations</p>
+          </div>
+          <div>
+            <strong id="report-immediately-title">Report Immediately:</strong>
+            <p id="report-immediately-desc">Use SafeReport or contact authorities</p>
+          </div>
+          <div>
+            <strong id="seek-support-title">Seek Support:</strong>
+            <p id="seek-support-desc">Talk to trusted friends, family, or professionals</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="support" aria-label="Support">
+      <p id="support-text">Need Help? Contact Cyber Harassment Helpline</p>
+      <p>
+        <a href="tel:+922130227011" target="_blank" rel="noopener" id="helpline-link">Cyber Harassment Helpline</a>
+      </p>
+      <div id="phone-display-box"></div> <!-- New div for displaying the phone number -->
+    </section>
+
+    <section id="privacy-policy" style="display: none; background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6); padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 60px;">
+      <h2 style="color: #2d6a4f;" id="privacy-title">Privacy Policy</h2>
+      <div id="privacy-content">
+        <p>At SafeReport, your privacy is our top priority. Here's how we handle your information:</p>
+        <ul>
+          <li>No personal data is required to submit a report.</li>
+          <li>Anonymous submissions are fully supported.</li>
+          <li>Uploaded files are used only for reviewing reports and are not stored permanently.</li>
+          <li>We do not use cookies, trackers, or collect browse data.</li>
+          <li>Your data is never shared with third parties.</li>
+          <li>All submitted cases are carefully monitored and reviewed by our professional team to ensure authenticity.</li>
+          <li>Each piece of evidence is thoroughly examined, and only verified cases are forwarded to relevant authorities such as the FIA.</li>
+        </ul>
+        <p>If you have concerns, please contact our support team.</p>
+      </div>
+      <button onclick="closePrivacy()" style="margin-top: 20px; background: #2d6a4f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" id="close-privacy-btn">Close</button>
+    </section>
+
+  </main>
+
+  <footer>
+    <span id="footer-text">SafeReport © 2025 | Built with ❤ for public safety</span><br />
+    <a href="javascript:void(0);" onclick="showPrivacy()" tabindex="0" id="privacy-link">Privacy Policy</a> |
+    <a href="#" tabindex="0" id="report-abuse-link">Report Abuse</a>
+  </footer>
+
+  <script>
+    // Smooth scroll for Start Report button
+    document.getElementById('start-report-btn').addEventListener('click', () => {
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Smooth scroll for new scroll indicator
+    document.querySelector('.scroll-down-indicator').addEventListener('click', () => {
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Show/hide contact info based on anonymous checkbox
+    const anonCheckbox = document.getElementById('anonymous');
+    const contactContainer = document.getElementById('contact-container');
+    anonCheckbox.addEventListener('change', () => {
+      contactContainer.style.display = anonCheckbox.checked ? 'none' : 'block';
+    });
+
+    // File upload preview
+    document.getElementById('file-upload').addEventListener('change', function(e) {
+      const fileInfo = document.getElementById('file-info');
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        fileInfo.textContent = Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB);
+      } else {
+        fileInfo.textContent = '';
+      }
+    });
+
+    // Form validation
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+      let isValid = true;
+      
+      // Check incident type
+      const incidentType = document.getElementById('incident-type');
+      const typeError = document.getElementById('type-error');
+      if (!incidentType.value) {
+        typeError.style.display = 'block';
+        isValid = false;
+      } else {
+        typeError.style.display = 'none';
+      }
+      
+      // Check description
+      const description = document.getElementById('description');
+      const descError = document.getElementById('desc-error');
+      if (!description.value.trim()) {
+        descError.style.display = 'block';
+        isValid = false;
+      } else {
+        descError.style.display = 'none';
+      }
+      
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    // Language translations object
+    const translations = {
+      en: {
+        direction: 'ltr',
+        logo: 'SafeReport',
+        heroTitle: '🛡 SafeReport',
+        heroDesc: 'Your anonymous digital space to report harassment, fraud, or abuse. No accounts. No tracking. Just help.',
+        startReport: 'Start Report',
+        formTitle: 'Report an Incident',
+        labelType: 'Type of incident',
+        selectTypeOption: 'Select one',
+        optionHarassment: 'Harassment',
+        optionFraud: 'Online Fraud',
+        optionAbuse: 'Abuse',
+        typeError: 'Please select an incident type.',
+        labelDesc: 'Description',
+        descPlaceholder: 'Write details here...',
+        descError: 'Please describe the incident.',
+        labelFile: 'Attach file (optional)',
+        anonText: 'Stay anonymous',
+        labelContact: 'Contact info (optional)',
+        contactPlaceholder: 'Email or phone',
+        contactHelp: 'Only used if you want a follow-up.',
+        submitBtn: 'Submit Report',
+        step1: 'Step 1: Fill the form',
+        step2: 'Step 2: Your info is private',
+        step3: 'Step 3: We forward it securely',
+        awarenessTitle: '🛡 Stay Safe Online - Know the Threats',
+        harassmentCardTitle: 'Online Harassment',
+        harassmentWhatIsIt: 'What is it?',
+        harassmentWhatIsItDesc: 'Cyberbullying, stalking, threats, or unwanted contact through digital platforms.',
+        harassmentHowToProtect: 'How to protect yourself:',
+        harassmentTip1: 'Keep personal information private',
+        harassmentTip2: 'Use privacy settings on social media',
+        harassmentTip3: 'Block and report harassers immediately',
+        harassmentTip4: 'Save evidence (screenshots, messages)',
+        harassmentTip5: 'Don\'t engage with trolls or harassers',
+        fraudCardTitle: 'Online Fraud',
+        fraudWhatIsIt: 'What is it?',
+        fraudWhatIsItDesc: 'Scams designed to steal money, personal information, or identity through fake websites, emails, or calls.',
+        fraudHowToProtect: 'How to protect yourself:',
+        fraudTip1: 'Verify website URLs before entering data',
+        fraudTip2: 'Never share OTPs or passwords',
+        fraudTip3: 'Be suspicious of "too good to be true" offers',
+        fraudTip4: 'Use secure payment methods',
+        fraudTip5: 'Check bank statements regularly',
+        abuseCardTitle: 'Digital Abuse',
+        abuseWhatIsIt: 'What is it?',
+        abuseWhatIsItDesc: 'Using technology to control, intimidate, or harm someone, including sharing private content without consent.',
+        abuseHowToProtect: 'How to protect yourself:',
+        abuseTip1: 'Be cautious about sharing intimate content',
+        abuseTip2: 'Regularly check who has access to your accounts',
+        abuseTip3: 'Use strong, unique passwords',
+        abuseTip4: 'Trust your instincts about suspicious behavior',
+        abuseTip5: 'Seek help from trusted friends or authorities',
+        securityCardTitle: 'Cybersecurity Threats',
+        securityWhatIsIt: 'What is it?',
+        securityWhatIsItDesc: 'Malware, phishing, data breaches, and other attacks targeting your devices and information.',
+        securityHowToProtect: 'How to protect yourself:',
+        securityTip1: 'Keep software and apps updated',
+        securityTip2: 'Use antivirus protection',
+        securityTip3: 'Enable two-factor authentication',
+        securityTip4: 'Be careful with public Wi-Fi',
+        securityTip5: 'Backup important data regularly',
+        emergencyTitle: '🚨 If You\'re Being Targeted',
+        docEverythingTitle: 'Document Everything:',
+        docEverythingDesc: 'Take screenshots, save messages, note dates and times',
+        dontEngageTitle: 'Don\'t Engage:',
+        dontEngageDesc: 'Avoid responding to threats or provocations',
+        reportImmediatelyTitle: 'Report Immediately:',
+        reportImmediatelyDesc: 'Use SafeReport or contact authorities',
+        seekSupportTitle: 'Seek Support:',
+        seekSupportDesc: 'Talk to trusted friends, family, or professionals',
+        supportText: 'Need Help? Contact Cyber Harassment Helpline',
+        drfText: 'Digital Rights Foundation', /* This will no longer be used in the HTML directly */
+        helplineText: 'Cyber Harassment Helpline',
+        footerText: 'SafeReport © 2025 | Built with ❤ for public safety',
+        privacy: 'Privacy Policy',
+        reportAbuse: 'Report Abuse',
+        privacyTitle: 'Privacy Policy',
+        privacyContent: `<p>At SafeReport, your privacy is our top priority. Here's how we handle your information:</p>
+        <ul>
+          <li>No personal data is required to submit a report.</li>
+          <li>Anonymous submissions are fully supported.</li>
+          <li>Uploaded files are used only for reviewing reports and are not stored permanently.</li>
+          <li>We do not use cookies, trackers, or collect browse data.</li>
+          <li>Your data is never shared with third parties.</li>
+          <li>All submitted cases are carefully monitored and reviewed by our professional team to ensure authenticity.</li>
+          <li>Each piece of evidence is thoroughly examined, and only verified cases are forwarded to relevant authorities such as the FIA.</li>
+        </ul>
+        <p>If you have concerns, please contact our support team.</p>`,
+        closeBtn: 'Close'
+      },
+      ur: {
+        direction: 'rtl',
+        logo: 'سیف رپورٹ',
+        heroTitle: '🛡 سیف رپورٹ',
+        heroDesc: 'ہراسانی، دھوکہ دہی، یا زیادتی کی گمنام رپورٹ کرنے کی جگہ۔ کوئی اکاؤنٹ نہیں۔ کوئی ٹریکنگ نہیں۔ صرف مدد۔',
+        startReport: 'رپورٹ شروع کریں',
+        formTitle: 'واقعہ رپورٹ کریں',
+        labelType: 'واقعے کی قسم',
+        selectTypeOption: 'منتخب کریں',
+        optionHarassment: 'ہراسانی',
+        optionFraud: 'آن لائن دھوکہ دہی',
+        optionAbuse: 'زیادتی',
+        typeError: 'براہ کرم واقعے کی قسم منتخب کریں۔',
+        labelDesc: 'تفصیل',
+        descPlaceholder: 'یہاں تفصیلات لکھیں...',
+        descError: 'براہ کرم واقعہ کی تفصیل لکھیں۔',
+        labelFile: 'فائل منسلک کریں (اختیاری)',
+        anonText: 'گمنام رہیں',
+        labelContact: 'رابطے کی معلومات (اختیاری)',
+        contactPlaceholder: 'ای میل یا فون',
+        contactHelp: 'صرف پیروی کے لیے استعمال کی جاتی ہے۔',
+        submitBtn: 'رپورٹ جمع کروائیں',
+        step1: 'مرحلہ 1: فارم پُر کریں',
+        step2: 'مرحلہ 2: آپ کی معلومات محفوظ ہیں',
+        step3: 'مرحلہ 3: ہم اسے محفوظ طریقے سے آگے بھیجتے ہیں',
+        awarenessTitle: '🛡 آن لائن محفوظ رہیں - خطرات کو جانیں',
+        harassmentCardTitle: 'آن لائن ہراسانی',
+        harassmentWhatIsIt: 'یہ کیا ہے؟',
+        harassmentWhatIsItDesc: 'ڈیجیٹل پلیٹ فارمز کے ذریعے سائبر بلنگ، پیچھا کرنا، دھمکیاں، یا ناپسندیدہ رابطہ۔',
+        harassmentHowToProtect: 'اپنے آپ کو کیسے بچائیں:',
+        harassmentTip1: 'ذاتی معلومات کو نجی رکھیں',
+        harassmentTip2: 'سوشل میڈیا پر پرائیویسی سیٹنگز استعمال کریں',
+        harassmentTip3: 'ہراساں کرنے والوں کو فوری طور پر بلاک اور رپورٹ کریں',
+        harassmentTip4: 'شواہد محفوظ کریں (اسکرین شاٹس، پیغامات)',
+        harassmentTip5: 'ٹرولز یا ہراساں کرنے والوں سے مشغول نہ ہوں',
+        fraudCardTitle: 'آن لائن دھوکہ دہی',
+        fraudWhatIsIt: 'یہ کیا ہے؟',
+        fraudWhatIsItDesc: 'جعلی ویب سائٹس، ای میلز، یا کالز کے ذریعے پیسے، ذاتی معلومات، یا شناخت چرانے کے لیے تیار کردہ اسکیمیں۔',
+        fraudHowToProtect: 'اپنے آپ کو کیسے بچائیں:',
+        fraudTip1: 'ڈیٹا داخل کرنے سے پہلے ویب سائٹ کے یو آر ایل کی تصدیق کریں',
+        fraudTip2: 'او ٹی پیز یا پاس ورڈز کبھی شیئر نہ کریں',
+        fraudTip3: '"بہت اچھا ہے سچ ہونے کے لیے" پیشکشوں پر شک کریں',
+        fraudTip4: 'محفوظ ادائیگی کے طریقے استعمال کریں',
+        fraudTip5: 'بینک اسٹیٹمنٹس باقاعدگی سے چیک کریں',
+        abuseCardTitle: 'ڈیجیٹل زیادتی',
+        abuseWhatIsIt: 'یہ کیا ہے؟',
+        abuseWhatIsItDesc: 'کسی کو کنٹرول کرنے، ڈرانے، یا نقصان پہنچانے کے لیے ٹیکنالوجی کا استعمال، بشمول رضامندی کے بغیر نجی مواد کا اشتراک۔',
+        abuseHowToProtect: 'اپنے آپ کو کیسے بچائیں:',
+        abuseTip1: 'صریح مواد شیئر کرنے میں محتاط رہیں',
+        abuseTip2: 'باقاعدگی سے چیک کریں کہ آپ کے اکاؤنٹس تک کس کی رسائی ہے',
+        abuseTip3: 'مضبوط، منفرد پاس ورڈز استعمال کریں',
+        abuseTip4: 'مشکوک رویے کے بارے میں اپنی جبلت پر بھروسہ کریں',
+        abuseTip5: 'معتبر دوستوں یا حکام سے مدد طلب کریں',
+        securityCardTitle: 'سائبر سیکیورٹی خطرات',
+        securityWhatIsIt: 'یہ کیا ہے؟',
+        securityWhatIsItDesc: 'میلویئر، فیشنگ، ڈیٹا کی خلاف ورزی، اور آپ کے آلات اور معلومات کو نشانہ بنانے والے دیگر حملے۔',
+        securityHowToProtect: 'اپنے آپ کو کیسے بچائیں:',
+        securityTip1: 'سافٹ ویئر اور ایپس کو اپ ڈیٹ رکھیں',
+        securityTip2: 'اینٹی وائرس تحفظ استعمال کریں',
+        securityTip3: 'دو فیکٹر توثیق فعال کریں',
+        securityTip4: 'عوامی وائی فائی کے ساتھ محتاط رہیں',
+        securityTip5: 'اہم ڈیٹا کا باقاعدگی سے بیک اپ لیں',
+        emergencyTitle: '🚨 اگر آپ کو نشانہ بنایا جا رہا ہے',
+        docEverythingTitle: 'ہر چیز دستاویز کریں:',
+        docEverythingDesc: 'اسکرین شاٹس لیں، پیغامات محفوظ کریں، تاریخیں اور اوقات نوٹ کریں',
+        dontEngageTitle: 'مشغول نہ ہوں:',
+        dontEngageDesc: 'دھمکیاں یا اشتعال انگیزیوں کا جواب دینے سے گریز کریں',
+        reportImmediatelyTitle: 'فوری رپورٹ کریں:',
+        reportImmediatelyDesc: 'سیف رپورٹ استعمال کریں یا حکام سے رابطہ کریں',
+        seekSupportTitle: 'مدد طلب کریں:',
+        seekSupportDesc: 'معتبر دوستوں، خاندان، یا پیشہ ور افراد سے بات کریں',
+        supportText: 'مدد چاہیے؟ سائبر ہراسانی ہیلپ لائن',
+        drfText: 'ڈیجیٹل رائٹس فاؤنڈیشن', /* This will no longer be used in the HTML directly */
+        helplineText: 'سائبر ہراسانی ہیلپ لائن',
+        footerText: 'سیف رپورٹ © 2025 | عوامی حفاظت کے لیے محبت کے ساتھ بنایا گیا',
+        privacy: 'پرائیویسی پالیسی',
+        reportAbuse: 'زیادتی رپورٹ کریں',
+        privacyTitle: 'پرائیویسی پالیسی',
+        privacyContent: `<p>سیف رپورٹ میں، آپ کی پرائیویسی ہماری اولین ترجیح ہے۔ یہاں ہم آپ کی معلومات کو کیسے سنبھالتے ہیں:</p>
+        <ul>
+          <li>کوئی ذاتی ڈیٹا درکار نہیں۔</li>
+          <li>گمنام گذارشات کو مکمل طور پر سپورٹ کیا جاتا ہے۔</li>
+          <li>اپ لوڈ شدہ فائلیں صرف رپورٹس کی جانچ کے لیے استعمال ہوتی ہیں اور مستقل طور پر محفوظ نہیں کی جاتی ہیں۔</li>
+          <li>ہم کوکیز، ٹریکرز استعمال نہیں کرتے یا براؤزنگ ڈیٹا جمع نہیں کرتے۔</li>
+          <li>آپ کا ڈیٹا کبھی تیسری پارٹی کے ساتھ شیئر نہیں کیا جاتا۔</li>
+          <li>تمام جمع کیے گئے کیسز کی ہماری پیشہ ور ٹیم کے ذریعہ احتیاط سے نگرانی اور جائزہ لیا جاتا ہے تاکہ اصلیت کو یقینی بنایا جا سکے۔</li>
+          <li>ہر شواہد کی مکمل جانچ کی جاتی ہے، اور صرف تصدیق شدہ کیسز کو متعلقہ حکام جیسے کہ FIA کو بھیجا جاتا ہے۔</li>
+        </ul>
+        <p>اگر آپ کے خدشات ہیں تو براہ کرم ہماری سپورٹ ٹیم سے رابطہ کریں۔</p>`,
+        closeBtn: 'بند کریں'
+      },
+      pa: {
+        direction: 'rtl',
+        logo: 'سیف رپورٹ',
+        heroTitle: '🛡 سیف رپورٹ',
+        heroDesc: 'ہراساں کرن، دھوکہ دہی یا زیادتی دی گمنام رپورٹ کرن والی جگہ۔ کوئی اکاؤنٹ نئیں۔ کوئی ٹریکنگ نئیں۔ صرف مدد۔',
+        startReport: 'رپورٹ شروع کرو',
+        formTitle: 'واقعہ رپورٹ کرو',
+        labelType: 'واقعے دی قسم',
+        selectTypeOption: 'چنو',
+        optionHarassment: 'ہراسانی',
+        optionFraud: 'آن لائن دھوکہ دہی',
+        optionAbuse: 'زیادتی',
+        typeError: 'براہ کرم واقعے دی قسم چنو۔',
+        labelDesc: 'تفصیل',
+        descPlaceholder: 'ایتھے تفصیلات لکھو...',
+        descError: 'براہ کرم واقعہ دی تفصیل لکھو۔',
+        labelFile: 'فائل منسلک کرو (اختیاری)',
+        anonText: 'گمنام رہو',
+        labelContact: 'رابطہ دی معلومات (اختیاری)',
+        contactPlaceholder: 'ای میل یا فون',
+        contactHelp: 'صرف فالو اپ لئی استعمال ہوندی اے۔',
+        submitBtn: 'رپورٹ جمع کرو',
+        step1: 'مرحلہ 1: فارم پُر کرو',
+        step2: 'مرحلہ 2: تُہاڈی معلومات محفوظ نیں',
+        step3: 'مرحلہ 3: اسیں محفوظ طریقے نال آگے بھیجدے آں',
+        awarenessTitle: '🛡 آن لائن محفوظ رہو - خطرے جانو',
+        harassmentCardTitle: 'آن لائن ہراسانی',
+        harassmentWhatIsIt: 'ایہہ کیہ اے؟',
+        harassmentWhatIsItDesc: 'ڈیجیٹل پلیٹ فارمز دے ذریعے سائبر بلنگ، پِچھا کرنا، دھمکیاں، یا ناپسندیدہ رابطہ۔',
+        harassmentHowToProtect: 'اپنے آپ نوں کیویں بچاؤ:',
+        harassmentTip1: 'ذاتی معلومات نوں نجی رکھو',
+        harassmentTip2: 'سوشل میڈیا اُتے پرائیویسی سیٹنگز استعمال کرو',
+        harassmentTip3: 'ہراساں کرن والیاں نوں فوری طور تے بلاک تے رپورٹ کرو',
+        harassmentTip4: 'شواہد محفوظ کرو (اسکرین شاٹس، پیغامات)',
+        harassmentTip5: 'ٹرولز یا ہراساں کرن والیاں نال مشغول نہ ہوو',
+        fraudCardTitle: 'آن لائن دھوکہ دہی',
+        fraudWhatIsIt: 'ایہہ کیہ اے؟',
+        fraudWhatIsItDesc: 'جعلی ویب سائٹس، ای میلز، یا کالز دے ذریعے پیسے، ذاتی معلومات، یا شناخت چوری کرن لئی تیار کیتیاں گئیاں اسکیمیں۔',
+        fraudHowToProtect: 'اپنے آپ نوں کیویں بچاؤ:',
+        fraudTip1: 'ڈیٹا داخل کرن توں پہلاں ویب سائٹ دے یو آر ایل دی تصدیق کرو',
+        fraudTip2: 'او ٹی پیز یا پاس ورڈز کدے شیئر نہ کرو',
+        fraudTip3: '"بہت ودھیا اے سچ ہون لئی" پیشکشاں اُتے شک کرو',
+        fraudTip4: 'محفوظ ادائیگی دے طریقے استعمال کرو',
+        fraudTip5: 'بینک اسٹیٹمنٹس باقاعدگی نال چیک کرو',
+        abuseCardTitle: 'ڈیجیٹل زیادتی',
+        abuseWhatIsIt: 'ایہہ کیہ اے؟',
+        abuseWhatIsItDesc: 'کسی نوں کنٹرول کرن، ڈران، یا نقصان پہنچان لئی ٹیکنالوجی دا استعمال، بشمول رضامندی دے بغیر نجی مواد دا اشتراک۔',
+        abuseHowToProtect: 'اپنے آپ نوں کیویں بچاؤ:',
+        abuseTip1: 'صریح مواد شیئر کرن وچ محتاط رہو',
+        abuseTip2: 'باقاعدگی نال چیک کرو کہ تہاڈے اکاؤنٹس تک کس دی رسائی اے',
+        abuseTip3: 'مضبوط، منفرد پاس ورڈز استعمال کرو',
+        abuseTip4: 'مشکوک رویے دے بارے وچ اپنی جبلت اُتے بھروسہ کرو',
+        abuseTip5: 'معتبر دوستاں یا حکام نال مدد طلب کرو',
+        securityCardTitle: 'سائبر سیکیورٹی خطرے',
+        securityWhatIsIt: 'ایہہ کیہ اے؟',
+        securityWhatIsItDesc: 'میلویئر، فیشنگ، ڈیٹا دی خلاف ورزی، تے تہاڈے آلات تے معلومات نوں نشانہ بنان والے ہور حملے۔',
+        securityHowToProtect: 'اپنے آپ نوں کیویں بچاؤ:',
+        securityTip1: 'سافٹ ویئر تے ایپس نوں اپ ڈیٹ رکھو',
+        securityTip2: 'اینٹی وائرس تحفظ استعمال کرو',
+        securityTip3: 'دو فیکٹر توثیق فعال کرو',
+        securityTip4: 'عوامی وائی فائی دے نال محتاط رہو',
+        securityTip5: 'اہم ڈیٹا دا باقاعدگی نال بیک اپ لو',
+        emergencyTitle: '🚨 جے تہانوں نشانہ بنایا جا رہیا اے',
+        docEverythingTitle: 'ہر چیز دستاویز کرو:',
+        docEverythingDesc: 'اسکرین شاٹس لوو، پیغامات محفوظ کرو، تاریخاں تے اوقات نوٹ کرو',
+        dontEngageTitle: 'مشغول نہ ہوو:',
+        dontEngageDesc: 'دھمکیاں یا اشتعال انگیزیوں دا جواب دین توں گریز کرو',
+        reportImmediatelyTitle: 'فوری رپورٹ کرو:',
+        reportImmediatelyDesc: 'سیف رپورٹ استعمال کرو یا حکام نال رابطہ کرو',
+        seekSupportTitle: 'مدد طلب کرو:',
+        seekSupportDesc: 'معتبر دوستاں، خاندان، یا پیشہ ور افراد نال گل کرو',
+        supportText: 'مدد چاہیے؟ سائبر ہراسانی ہیلپ لائن',
+        drfText: 'ڈیجیٹل رائٹس فاؤنڈیشن', /* This will no longer be used in the HTML directly */
+        helplineText: 'سائبر ہراسانی ہیلپ لائن',
+        footerText: 'سیف رپورٹ © 2025 | عوامی حفاظت لئی پیار نال بنایا گیا',
+        privacy: 'پرائیویسی پالیسی',
+        reportAbuse: 'زیادتی رپورٹ کرو',
+        privacyTitle: 'پرائیویسی پالیسی',
+        privacyContent: `<p>سیف رپورٹ وچ، تہاڈی پرائیویسی ساڈی پہلی ترجیح اے۔ ایتھے اسیں تہاڈی معلومات نوں کویں سنبھالدے آں:</p>
+        <ul>
+          <li>کوئی ذاتی ڈیٹا لوڑ نئیں۔</li>
+          <li>گمنام گذارشات کو مکمل طور پر سپورٹ کیا جاتا ہے۔</li>
+          <li>اپ لوڈ شدہ فائلیں صرف رپورٹس کی جانچ کے لیے استعمال ہوتی ہیں اور مستقل طور پر محفوظ نہیں کی جاتی ہیں۔</li>
+          <li>ہم کوکیز، ٹریکرز استعمال نہیں کرتے یا براؤزنگ ڈیٹا جمع نہیں کرتے۔</li>
+          <li>آپ کا ڈیٹا کبھی تیسری پارٹی کے ساتھ شیئر نہیں کیا جاتا۔</li>
+          <li>تمام جمع کیے گئے کیسز کی ہماری پیشہ ور ٹیم کے ذریعہ احتیاط سے نگرانی اور جائزہ لیا جاتا ہے تاکہ اصلیت کو یقینی بنایا جا سکے۔</li>
+          <li>ہر شواہد کی مکمل جانچ کیتی جاندی اے، تے صرف تصدیق شدہ کیسز نوں متعلقہ حکام جویں کہ FIA نوں بھیجیا جاندا اے۔</li>
+        </ul>
+        <p>جے تہاڈے خدشے نیں تاں براہ کرم ساڈی سپورٹ ٹیم نال رابطہ کرو۔</p>`,
+        closeBtn: 'بند کرو'
+      }
+    };
+
+    // Function to update all texts on the page according to chosen language
+    function setLanguage(lang) {
+      const t = translations[lang] || translations['en'];
+      document.body.dir = t.direction;
+
+      // Header
+      document.getElementById('logo-text').textContent = t.logo;
+      document.getElementById('language-select').value = lang;
+
+      // Hero
+      document.getElementById('hero-title').textContent = t.heroTitle;
+      document.getElementById('hero-desc').textContent = t.heroDesc;
+      document.getElementById('start-report-btn').textContent = t.startReport;
+
+      // Form
+      document.getElementById('form-title').textContent = t.formTitle;
+      document.getElementById('label-type').textContent = t.labelType;
+
+      const selectType = document.getElementById('incident-type');
+      selectType.options[0].textContent = t.selectTypeOption;
+      selectType.options[1].textContent = t.optionHarassment;
+      selectType.options[2].textContent = t.optionFraud;
+      selectType.options[3].textContent = t.optionAbuse;
+
+      document.getElementById('type-error').textContent = t.typeError;
+      document.getElementById('label-desc').textContent = t.labelDesc;
+      document.getElementById('description').placeholder = t.descPlaceholder;
+      document.getElementById('desc-error').textContent = t.descError;
+      document.getElementById('label-file').textContent = t.labelFile;
+      document.getElementById('anon-text').textContent = t.anonText;
+      document.getElementById('label-contact').textContent = t.labelContact;
+      document.getElementById('contact-info').placeholder = t.contactPlaceholder;
+      document.getElementById('contact-help').textContent = t.contactHelp;
+      document.getElementById('submit-btn').textContent = t.submitBtn;
+
+      // Steps
+      document.getElementById('step1-text').textContent = t.step1;
+      document.getElementById('step2-text').textContent = t.step2;
+      document.getElementById('step3-text').textContent = t.step3;
+
+      // Awareness Section
+      document.getElementById('awareness-title').textContent = t.awarenessTitle;
+
+      document.getElementById('harassment-card-title').textContent = t.harassmentCardTitle;
+      document.getElementById('harassment-what-is-it').textContent = t.harassmentWhatIsIt;
+      document.getElementById('harassment-what-is-it-desc').textContent = t.harassmentWhatIsItDesc;
+      document.getElementById('harassment-how-to-protect').textContent = t.harassmentHowToProtect;
+      document.getElementById('harassment-tip1').textContent = t.harassmentTip1;
+      document.getElementById('harassment-tip2').textContent = t.harassmentTip2;
+      document.getElementById('harassment-tip3').textContent = t.harassmentTip3;
+      document.getElementById('harassment-tip4').textContent = t.harassmentTip4;
+      document.getElementById('harassment-tip5').textContent = t.harassmentTip5;
+
+      document.getElementById('fraud-card-title').textContent = t.fraudCardTitle;
+      document.getElementById('fraud-what-is-it').textContent = t.fraudWhatIsIt;
+      document.getElementById('fraud-what-is-it-desc').textContent = t.fraudWhatIsItDesc;
+      document.getElementById('fraud-how-to-protect').textContent = t.fraudHowToProtect;
+      document.getElementById('fraud-tip1').textContent = t.fraudTip1;
+      document.getElementById('fraud-tip2').textContent = t.fraudTip2;
+      document.getElementById('fraud-tip3').textContent = t.fraudTip3;
+      document.getElementById('fraud-tip4').textContent = t.fraudTip4;
+      document.getElementById('fraud-tip5').textContent = t.fraudTip5;
+
+      document.getElementById('abuse-card-title').textContent = t.abuseCardTitle;
+      document.getElementById('abuse-what-is-it').textContent = t.abuseWhatIsIt;
+      document.getElementById('abuse-what-is-it-desc').textContent = t.abuseWhatIsItDesc;
+      document.getElementById('abuse-how-to-protect').textContent = t.abuseHowToProtect;
+      document.getElementById('abuse-tip1').textContent = t.abuseTip1;
+      document.getElementById('abuse-tip2').textContent = t.abuseTip2;
+      document.getElementById('abuse-tip3').textContent = t.abuseTip3;
+      document.getElementById('abuse-tip4').textContent = t.abuseTip4;
+      document.getElementById('abuse-tip5').textContent = t.abuseTip5;
+
+      document.getElementById('security-card-title').textContent = t.securityCardTitle;
+      document.getElementById('security-what-is-it').textContent = t.securityWhatIsIt;
+      document.getElementById('security-what-is-it-desc').textContent = t.securityWhatIsItDesc;
+      document.getElementById('security-how-to-protect').textContent = t.securityHowToProtect;
+      document.getElementById('security-tip1').textContent = t.securityTip1;
+      document.getElementById('security-tip2').textContent = t.securityTip2;
+      document.getElementById('security-tip3').textContent = t.securityTip3;
+      document.getElementById('security-tip4').textContent = t.securityTip4;
+      document.getElementById('security-tip5').textContent = t.securityTip5;
+
+      // Emergency Tips
+      document.getElementById('emergency-title').textContent = t.emergencyTitle;
+      document.getElementById('doc-everything-title').textContent = t.docEverythingTitle;
+      document.getElementById('doc-everything-desc').textContent = t.docEverythingDesc;
+      document.getElementById('dont-engage-title').textContent = t.dontEngageTitle;
+      document.getElementById('dont-engage-desc').textContent = t.dontEngageDesc;
+      document.getElementById('report-immediately-title').textContent = t.reportImmediatelyTitle;
+      document.getElementById('report-immediately-desc').textContent = t.reportImmediatelyDesc;
+      document.getElementById('seek-support-title').textContent = t.seekSupportTitle;
+      document.getElementById('seek-support-desc').textContent = t.seekSupportDesc;
+
+      // Support
+      document.getElementById('support-text').textContent = t.supportText;
+      document.getElementById('helpline-link').textContent = t.helplineText;
+
+      // Footer
+      document.getElementById('footer-text').textContent = t.footerText;
+      document.getElementById('privacy-link').textContent = t.privacy;
+      document.getElementById('report-abuse-link').textContent = t.reportAbuse;
+
+      // Privacy Policy Section
+      document.getElementById('privacy-title').textContent = t.privacyTitle;
+      document.getElementById('privacy-content').innerHTML = t.privacyContent;
+      document.getElementById('close-privacy-btn').textContent = t.closeBtn;
+    }
+
+    // On language selection change
+    document.getElementById('language-select').addEventListener('change', e => {
+      setLanguage(e.target.value);
+    });
+
+    // Initialize default language
+    setLanguage('en');
+
+    // Show/hide Privacy Policy section
+    function showPrivacy() {
+      document.getElementById('privacy-policy').style.display = 'block';
+      document.getElementById('privacy-policy').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closePrivacy() {
+      document.getElementById('privacy-policy').style.display = 'none';
+    }
+
+    // Success message after form submission
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+      // Form validation already handled above
+      setTimeout(() => {
+        // Replaced alert with a custom message box for better UX
+        const messageBox = document.createElement('div');
+        messageBox.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #2d6a4f;
+          color: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          text-align: center;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.1rem;
+        `;
+        messageBox.textContent = 'Thank you for your report. It has been submitted successfully and will be reviewed by our team.';
+        document.body.appendChild(messageBox);
+
+        setTimeout(() => {
+          document.body.removeChild(messageBox);
+        }, 3000); // Message disappears after 3 seconds
+      }, 100);
+    });
+
+    // Display phone number when helpline link is clicked
+    document.getElementById('helpline-link').addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent default phone call behavior
+      const phoneNumber = this.href.replace('tel:', ''); // Extract number from href
+      const phoneDisplayBox = document.getElementById('phone-display-box');
+
+      phoneDisplayBox.textContent = Call us at: ${phoneNumber};
+      phoneDisplayBox.style.display = 'block'; // Make it visible
+    });
+
+  </script>
+</body>
+</html>
