@@ -651,9 +651,22 @@
           <li>All submitted cases are carefully monitored and reviewed by our professional team to ensure authenticity.</li>
           <li>Each piece of evidence is thoroughly examined, and only verified cases are forwarded to relevant authorities such as the FIA.</li>
         </ul>
-        <p>If you have concerns, please contact our support team.</p>
+        <p>If you have any concerns, please contact our support team.</p>
       </div>
       <button onclick="closePrivacy()" style="margin-top: 20px; background: #2d6a4f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" id="close-privacy-btn">Close</button>
+    </section>
+
+    <section id="disclaimer-section" style="display: none; background: radial-gradient(circle at 0% 0%, #49ff71, #3ae3c6); padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 60px;">
+      <h2 style="color: #2d6a4f;" id="disclaimer-title">🔒 Disclaimer</h2>
+      <div id="disclaimer-content">
+        <p><em>SafeReport is a student-led academic project developed for educational purposes only.</em></p>
+        <p>The platform is currently <em>not affiliated with any official institution, organization, or authority, and we do <strong>not have the capacity to investigate, act upon, or forward any reports</strong></em> submitted through this website.</p>
+        <p>While our long-term goal is to collaborate with relevant organizations and provide real support in forwarding sensitive cases to proper channels, <em>this version is only a prototype.</em></p>
+        <p><em>Do not rely on this platform for emergency or life-threatening situations.</em> If you or someone you know is in immediate danger, please contact <em>local law enforcement or emergency services</em> directly.</p>
+        <p>We are committed to privacy and ethical use of information. Any data shared here will be handled with care but may not be reviewed or responded to.</p>
+        <p>If you have any concerns, feel free to contact us at <a href="mailto:safereport85@gmail.com" style="color: var(--green-deep);">safereport85@gmail.com</a>.</p>
+      </div>
+      <button onclick="closeDisclaimer()" style="margin-top: 20px; background: #2d6a4f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" id="close-disclaimer-btn">Close</button>
     </section>
 
   </main>
@@ -661,6 +674,7 @@
   <footer>
     <span id="footer-text">SafeReport © 2025 | Built with ❤ for public safety</span><br />
     <a href="javascript:void(0);" onclick="showPrivacy()" tabindex="0" id="privacy-link">Privacy Policy</a> |
+    <a href="javascript:void(0);" onclick="showDisclaimer()" tabindex="0" id="disclaimer-link">Disclaimer</a> |
     <a href="#" tabindex="0" id="report-abuse-link">Report Abuse</a>
   </footer>
 
@@ -796,10 +810,10 @@
         seekSupportTitle: 'Seek Support:',
         seekSupportDesc: 'Talk to trusted friends, family, or professionals',
         supportText: 'Need Help? Contact Cyber Harassment Helpline',
-        drfText: 'Digital Rights Foundation', /* This will no longer be used in the HTML directly */
         helplineText: 'Cyber Harassment Helpline',
         footerText: 'SafeReport © 2025 | Built with ❤ for public safety',
         privacy: 'Privacy Policy',
+        disclaimer: 'Disclaimer',
         reportAbuse: 'Report Abuse',
         privacyTitle: 'Privacy Policy',
         privacyContent: `<p>At SafeReport, your privacy is our top priority. Here's how we handle your information:</p>
@@ -810,10 +824,18 @@
           <li>We do not use cookies, trackers, or collect browse data.</li>
           <li>Your data is never shared with third parties.</li>
           <li>All submitted cases are carefully monitored and reviewed by our professional team to ensure authenticity.</li>
-          <li>Each piece of evidence is thoroughly examined, and only verified cases are forwarded to relevant authorities .</li>
+          <li>Each piece of evidence is thoroughly examined, and only verified cases are forwarded to relevant authorities such as the FIA.</li>
         </ul>
-        <p>If you have concerns, please contact our support team at safereport85@gmail.com .</p>`,
-        closeBtn: 'Close'
+        <p>If you have any concerns, please contact our support team.</p>`,
+        closeBtn: 'Close',
+        disclaimerTitle: '🔒 Disclaimer',
+        disclaimerContent: `<p><em>SafeReport is a student-led academic project developed for educational purposes only.</em></p>
+        <p>The platform is currently <em>not affiliated with any official institution, organization, or authority, and we do <strong>not have the capacity to investigate, act upon, or forward any reports</strong></em> submitted through this website.</p>
+        <p>While our long-term goal is to collaborate with relevant organizations and provide real support in forwarding sensitive cases to proper channels, <em>this version is only a prototype.</em></p>
+        <p><em>Do not rely on this platform for emergency or life-threatening situations.</em> If you or someone you know is in immediate danger, please contact <em>local law enforcement or emergency services</em> directly.</p>
+        <p>We are committed to privacy and ethical use of information. Any data shared here will be handled with care but may not be reviewed or responded to.</p>
+        <p>If you have any concerns, feel free to contact us at <a href="mailto:safereport85@gmail.com" style="color: var(--green-deep);">safereport85@gmail.com</a>.</p>`,
+        closeDisclaimerBtn: 'Close'
       },
       ur: {
         direction: 'rtl',
@@ -887,10 +909,10 @@
         seekSupportTitle: 'مدد طلب کریں:',
         seekSupportDesc: 'معتبر دوستوں، خاندان، یا پیشہ ور افراد سے بات کریں',
         supportText: 'مدد چاہیے؟ سائبر ہراسانی ہیلپ لائن',
-        drfText: 'ڈیجیٹل رائٹس فاؤنڈیشن', /* This will no longer be used in the HTML directly */
         helplineText: 'سائبر ہراسانی ہیلپ لائن',
         footerText: 'سیف رپورٹ © 2025 | عوامی حفاظت کے لیے محبت کے ساتھ بنایا گیا',
         privacy: 'پرائیویسی پالیسی',
+        disclaimer: 'دستبرداری',
         reportAbuse: 'زیادتی رپورٹ کریں',
         privacyTitle: 'پرائیویسی پالیسی',
         privacyContent: `<p>سیف رپورٹ میں، آپ کی پرائیویسی ہماری اولین ترجیح ہے۔ یہاں ہم آپ کی معلومات کو کیسے سنبھالتے ہیں:</p>
@@ -901,12 +923,18 @@
           <li>ہم کوکیز، ٹریکرز استعمال نہیں کرتے یا براؤزنگ ڈیٹا جمع نہیں کرتے۔</li>
           <li>آپ کا ڈیٹا کبھی تیسری پارٹی کے ساتھ شیئر نہیں کیا جاتا۔</li>
           <li>تمام جمع کیے گئے کیسز کی ہماری پیشہ ور ٹیم کے ذریعہ احتیاط سے نگرانی اور جائزہ لیا جاتا ہے تاکہ اصلیت کو یقینی بنایا جا سکے۔</li>
-          <li>ہر شواہد کی مکمل جانچ کی جاتی ہے، اور صرف تصدیق شدہ کیسز کو متعلقہ حکام کو بھیجا جاتا ہے۔</li>
+          <li>ہر شواہد کی مکمل جانچ کی جاتی ہے، اور صرف تصدیق شدہ کیسز کو متعلقہ حکام جیسے کہ FIA کو بھیجا جاتا ہے۔</li>
         </ul>
-        <p>اگر آپ کو کوئی خدشہ ہو تو براہِ کرم ہماری سپورٹ ٹیم سے safereport85@gmail.com پر رابطہ کریں۔
-
-۔</p>`,
-        closeBtn: 'بند کریں'
+        <p>اگر آپ کے خدشات ہیں تو براہ کرم ہماری سپورٹ ٹیم سے رابطہ کریں۔</p>`,
+        closeBtn: 'بند کریں',
+        disclaimerTitle: '🔒 دستبرداری',
+        disclaimerContent: `<p><em>سیف رپورٹ ایک طالب علم کی زیر قیادت تعلیمی منصوبہ ہے جو صرف تعلیمی مقاصد کے لیے تیار کیا گیا ہے۔</em></p>
+        <p>یہ پلیٹ فارم فی الحال <em>کسی بھی سرکاری ادارے، تنظیم یا اتھارٹی سے وابستہ نہیں ہے، اور ہمارے پاس اس ویب سائٹ کے ذریعے جمع کرائی گئی کسی بھی رپورٹ کی <strong>تحقیقات کرنے، ان پر عمل کرنے، یا آگے بھیجنے کی صلاحیت نہیں ہے</strong></em>۔</p>
+        <p>اگرچہ ہمارا طویل مدتی مقصد متعلقہ تنظیموں کے ساتھ تعاون کرنا اور حساس معاملات کو مناسب چینلز تک پہنچانے میں حقیقی مدد فراہم کرنا ہے، <em>یہ ورژن صرف ایک پروٹو ٹائپ ہے۔</em></p>
+        <p><em>ہنگامی یا جان لیوا حالات کے لیے اس پلیٹ فارم پر انحصار نہ کریں۔</em> اگر آپ یا آپ کا کوئی جاننے والا فوری خطرے میں ہے، تو براہ کرم براہ راست <em>مقامی قانون نافذ کرنے والے اداروں یا ہنگامی خدمات</em> سے رابطہ کریں۔</p>
+        <p>ہم رازداری اور معلومات کے اخلاقی استعمال کے لیے پرعزم ہیں۔ یہاں شیئر کیا گیا کوئی بھی ڈیٹا احتیاط سے سنبھالا جائے گا لیکن ہو سکتا ہے اس کا جائزہ نہ لیا جائے یا اس کا جواب نہ دیا جائے۔</p>
+        <p>اگر آپ کو کوئی تشویش ہے، تو بلا جھجھک ہم سے <a href="mailto:safereport85@gmail.com" style="color: var(--green-deep);">safereport85@gmail.com</a> پر رابطہ کریں۔</p>`,
+        closeDisclaimerBtn: 'بند کریں'
       },
       pa: {
         direction: 'rtl',
@@ -980,10 +1008,10 @@
         seekSupportTitle: 'مدد طلب کرو:',
         seekSupportDesc: 'معتبر دوستاں، خاندان، یا پیشہ ور افراد نال گل کرو',
         supportText: 'مدد چاہیے؟ سائبر ہراسانی ہیلپ لائن',
-        drfText: 'ڈیجیٹل رائٹس فاؤنڈیشن', /* This will no longer be used in the HTML directly */
         helplineText: 'سائبر ہراسانی ہیلپ لائن',
         footerText: 'سیف رپورٹ © 2025 | عوامی حفاظت لئی پیار نال بنایا گیا',
         privacy: 'پرائیویسی پالیسی',
+        disclaimer: 'دستبرداری',
         reportAbuse: 'زیادتی رپورٹ کرو',
         privacyTitle: 'پرائیویسی پالیسی',
         privacyContent: `<p>سیف رپورٹ وچ، تہاڈی پرائیویسی ساڈی پہلی ترجیح اے۔ ایتھے اسیں تہاڈی معلومات نوں کویں سنبھالدے آں:</p>
@@ -994,10 +1022,18 @@
           <li>ہم کوکیز، ٹریکرز استعمال نہیں کرتے یا براؤزنگ ڈیٹا جمع نہیں کرتے۔</li>
           <li>آپ کا ڈیٹا کبھی تیسری پارٹی کے ساتھ شیئر نہیں کیا جاتا۔</li>
           <li>تمام جمع کیے گئے کیسز کی ہماری پیشہ ور ٹیم کے ذریعہ احتیاط سے نگرانی اور جائزہ لیا جاتا ہے تاکہ اصلیت کو یقینی بنایا جا سکے۔</li>
-          <li>ہر شواہد کی مکمل جانچ کیتی جاندی اے، تے صرف تصدیق شدہ کیسز نوں متعلقہ حکام  نوں بھیجیا جاندا اے۔</li>
+          <li>ہر شواہد کی مکمل جانچ کیتی جاندی اے، تے صرف تصدیق شدہ کیسز نوں متعلقہ حکام جویں کہ FIA نوں بھیجیا جاندا اے۔</li>
         </ul>
-        <p>جے تُہانوں کسے وی قسم دا خدشہ ہووے تے مہر بانی کرکے ساڈی سپورٹ ٹیم نال safereport85@gmail.com اُتے رابطہ کرو۔</p>`,
-        closeBtn: 'بند کرو'
+        <p>جے تہاڈے خدشے نیں تاں براہ کرم ساڈی سپورٹ ٹیم نال رابطہ کرو۔</p>`,
+        closeBtn: 'بند کرو',
+        disclaimerTitle: '🔒 دستبرداری',
+        disclaimerContent: `<p><em>سیف رپورٹ اک طالب علم دی اگوائی وچ تعلیمی پروجیکٹ اے جو صرف تعلیمی مقصداں لئی بنایا گیا اے۔</em></p>
+        <p>ایہہ پلیٹ فارم فی الحال <em>کسے وی سرکاری ادارے، تنظیم یا اتھارٹی نال جڑیا نہیں اے، تے ساڈے کول اس ویب سائٹ راہیں جمع کروائیاں گئیاں کسے وی رپورٹ دی <strong>تحقیقات کرن، اوہناں تے عمل کرن، یا اگے بھیجن دی صلاحیت نہیں اے</strong></em>۔</p>
+        <p>بھاویں ساڈا لمبے ویلے دا مقصد متعلقہ تنظیماں نال رل کے کم کرنا تے حساس کیساں نوں صحیح چینلاں تک پہنچان وچ حقیقی مدد فراہم کرنا اے، <em>ایہہ ورژن صرف اک پروٹوٹائپ اے۔</em></p>
+        <p><em>ہنگامی یا جان لیوا حالات لئی اس پلیٹ فارم تے بھروسہ نہ کرو۔</em> جے تسیں یا تہاڈا کوئی جانن والا فوری خطرے وچ اے، تے مہربانی کرکے سدھا <em>مقامی قانون نافذ کرن والے اداریاں یا ہنگامی خدمات</em> نال رابطہ کرو۔</p>
+        <p>اسیں رازداری تے معلومات دے اخلاقی استعمال لئی پرعزم آں۔ ایتھے سانجھا کیتا گیا کوئی وی ڈیٹا احتیاط نال سنبھالیا جاوے گا پر ہو سکدا اے کہ اس دا جائزہ نہ لیا جاوے یا اس دا جواب نہ دتا جاوے۔</p>
+        <p>جے تہانوں کوئی فکر اے، تے بلا جھجک ساڈے نال <a href="mailto:safereport85@gmail.com" style="color: var(--green-deep);">safereport85@gmail.com</a> تے رابطہ کرو۔</p>`,
+        closeDisclaimerBtn: 'بند کرو'
       }
     };
 
@@ -1102,12 +1138,18 @@
       // Footer
       document.getElementById('footer-text').textContent = t.footerText;
       document.getElementById('privacy-link').textContent = t.privacy;
+      document.getElementById('disclaimer-link').textContent = t.disclaimer;
       document.getElementById('report-abuse-link').textContent = t.reportAbuse;
 
       // Privacy Policy Section
       document.getElementById('privacy-title').textContent = t.privacyTitle;
       document.getElementById('privacy-content').innerHTML = t.privacyContent;
       document.getElementById('close-privacy-btn').textContent = t.closeBtn;
+
+      // Disclaimer Section
+      document.getElementById('disclaimer-title').innerHTML = t.disclaimerTitle;
+      document.getElementById('disclaimer-content').innerHTML = t.disclaimerContent;
+      document.getElementById('close-disclaimer-btn').textContent = t.closeDisclaimerBtn;
     }
 
     // On language selection change
@@ -1126,6 +1168,16 @@
 
     function closePrivacy() {
       document.getElementById('privacy-policy').style.display = 'none';
+    }
+
+    // Show/hide Disclaimer section
+    function showDisclaimer() {
+      document.getElementById('disclaimer-section').style.display = 'block';
+      document.getElementById('disclaimer-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeDisclaimer() {
+      document.getElementById('disclaimer-section').style.display = 'none';
     }
 
     // Success message after form submission
@@ -1164,7 +1216,7 @@
       const phoneNumber = this.href.replace('tel:', ''); // Extract number from href
       const phoneDisplayBox = document.getElementById('phone-display-box');
 
-      phoneDisplayBox.textContent = `Call  at: ${phoneNumber}`;
+      phoneDisplayBox.textContent = `Call us at: ${phoneNumber}`;
       phoneDisplayBox.style.display = 'block'; // Make it visible
     });
 
